@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POMTIK - Download Video TikTok</title>
+  
+  <!-- FontAwesome Icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Config PWA untuk Mode Aplikasi HP -->
+  <meta name="theme-color" content="#1e3a8a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="POMTIK">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(180deg, #1e3a8a 0%, #2563eb 45%, #3b82f6 100%);
+      min-height: 100vh;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 40px;
+    }
+
+    /* Header Navigasi */
+    header {
+      width: 100%;
+      max-width: 540px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #1d4ed8, #60a5fa);
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #ffffff;
+      font-size: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .btn-install-header {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+
+    .menu-icon {
+      font-size: 24px;
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    /* Main Container */
+    .main-container {
+      width: 100%;
+      max-width: 500px;
+      padding: 10px 20px;
+      text-align: center;
+    }
+
+    h1.title {
+      font-size: 28px;
+      font-weight: 800;
+      margin: 20px 0 25px 0;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    /* Area Form Input */
+    .input-wrapper {
+      position: relative;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      border: 2px solid #bfdbfe;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      border: none;
+      outline: none;
+      padding: 12px 14px;
+      font-size: 15px;
+      color: #1e293b;
+      background: transparent;
+    }
+
+    .input-wrapper input::placeholder {
+      color: #94a3b8;
+    }
+
+    .btn-paste {
+      background: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    /* Tombol Utama Download Video */
+    .btn-download-main {
+      width: 100%;
+      margin-top: 15px;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Loading & Error */
+    .loading-state {
+      display: none;
+      margin: 20px 0;
+      font-weight: 600;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 12px;
+      border-radius: 10px;
+    }
+
+    .loading-state i {
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .error-box {
+      display: none;
+      background: #ffffff;
+      color: #dc2626;
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 15px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Kartu POMTIK */
+    .pomtik-card {
+      background: #ffffff;
+      color: #1e293b;
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+      text-align: left;
+    }
+
+    .pomtik-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .pomtik-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pomtik-icon-box {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #ffffff;
+      font-size: 22px;
+    }
+
+    .pomtik-info h3 {
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .stars {
+      color: #f59e0b;
+      font-size: 12px;
+    }
+
+    .downloads-count {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .btn-download-app-now {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Preview Video */
+    .video-preview {
+      display: none;
+      margin-top: 18px;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 18px;
+    }
+
+    .video-details {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .video-details img {
+      width: 75px;
+      height: 75px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .video-details .title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .video-details .author {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .download-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-opt {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-opt-nowm {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+    }
+
+    .btn-opt-mp3 {
+      background: #0284c7;
+      color: #ffffff;
+    }
+
+    .btn-opt-wm {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Navigasi -->
+  <header>
+    <div class="brand-logo">
+      <i class="fa-solid fa-download"></i>
+    </div>
+    <!-- Tombol Instal Aplikasi Header -->
+    <button class="btn-install-header" onclick="triggerAppInstall()">
+      <i class="fa-solid fa-download"></i> Instal aplikasi
+    </button>
+    <div class="menu-icon">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+  </header>
+
+  <!-- Bagian Utama -->
+  <div class="main-container">
+    <h1 class="title">Download video TikTok</h1>
+
+    <!-- Input Link -->
+    <div class="input-wrapper">
+      <input type="text" id="tiktokUrl" placeholder="Tempel tautan video di sini" autocomplete="off">
+      <button class="btn-paste" onclick="pasteFromClipboard()">
+        <i class="fa-regular fa-paste"></i> Tempel
+      </button>
+    </div>
+
+    <!-- Tombol Proses Link -->
+    <button class="btn-download-main" onclick="fetchTikTokData()">Download</button>
+
+    <!-- Indicator Loading & Error -->
+    <div id="loading" class="loading-state">
+      <i class="fa-solid fa-spinner"></i> <span id="loadingText">Memproses link video...</span>
+    </div>
+    <div id="errorBox" class="error-box"></div>
+
+    <!-- Kartu POMTIK (Aplikasi) -->
+    <div class="pomtik-card">
+      <div class="pomtik-header">
+        <div class="pomtik-left">
+          <div class="pomtik-icon-box">
+            <i class="fa-solid fa-download"></i>
+          </div>
+          <div class="pomtik-info">
+            <h3>POMTIK</h3>
+            <div class="stars">
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <p class="downloads-count">5M+ Downloads</p>
+          </div>
+        </div>
+        <!-- Tombol Download Aplikasi Kartu -->
+        <button class="btn-download-app-now" onclick="triggerAppInstall()">Download Now</button>
+      </div>
+
+      <!-- Hasil Parse Video TikTok -->
+      <div id="videoPreview" class="video-preview">
+        <div class="video-details">
+          <img id="videoCover" src="" alt="Thumbnail">
+          <div>
+            <p id="videoTitle" class="title">-</p>
+            <p id="videoAuthor" class="author">-</p>
+          </div>
+        </div>
+
+        <div class="download-options">
+          <button id="btnNoWm" class="btn-opt btn-opt-nowm">
+            <i class="fa-solid fa-video"></i> Tanpa Watermark
+          </button>
+          <button id="btnMp3" class="btn-opt btn-opt-mp3">
+            <i class="fa-solid fa-music"></i> MP3 (Audio)
+          </button>
+          <button id="btnWm" class="btn-opt btn-opt-wm">
+            <i class="fa-solid fa-film"></i> Video Biasa (Watermark)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- FITUR 1: SISTEM INSTAL APLIKASI (PWA & APK FALLBACK) ---
+    let deferredPrompt = null;
+
+    // Tangkap Event PWA Install Browser
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    // Fungsi Ketika Tombol "Instal Aplikasi" / "Download Now" Diklik
+    async function triggerAppInstall() {
+      if (deferredPrompt) {
+        // Memicu jendela instalasi native bawaan browser HP
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          console.log('Aplikasi POMTIK berhasil diinstal!');
+        }
+        deferredPrompt = null;
+      } else {
+        // Petunjuk Instalasi Manual jika di browser biasa
+        alert("Cara Mengunduh Aplikasi POMTIK ke HP:\n\n1. Klik ikon 3 titik (⋮) di pojok kanan atas browser Chrome/Edge.\n2. Pilih 'Tambahkan ke Layar Utama' / 'Instal Aplikasi'.\n3. Ikon POMTIK akan otomatis muncul di menu HP Anda!");
+      }
+    }
+
+    // --- FITUR 2: PASTE & UNDUH VIDEO TIKTOK ---
+    let mediaData = { noWmUrl: '', mp3Url: '', wmUrl: '', title: 'POMTIK' };
+
+    async function pasteFromClipboard() {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) document.getElementById('tiktokUrl').value = text;
+      } catch (err) {
+        alert('Silakan tempel tautan secara manual.');
+      }
+    }
+
+    async function fetchTikTokData() {
+      const urlInput = document.getElementById('tiktokUrl').value.trim();
+      const loading = document.getElementById('loading');
+      const loadingText = document.getElementById('loadingText');
+      const errorBox = document.getElementById('errorBox');
+      const videoPreview = document.getElementById('videoPreview');
+
+      errorBox.style.display = 'none';
+      videoPreview.style.display = 'none';
+
+      if (!urlInput) {
+        showError('Silakan masukkan link video TikTok terlebih dahulu!');
+        return;
+      }
+
+      loadingText.innerText = 'Memproses link video...';
+      loading.style.display = 'block';
+
+      try {
+        const response = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(urlInput)}`);
+        const result = await response.json();
+
+        loading.style.display = 'none';
+
+        if (result.code === 0 && result.data) {
+          const data = result.data;
+          document.getElementById('videoCover').src = data.cover;
+          document.getElementById('videoTitle').innerText = data.title || 'Video TikTok';
+          document.getElementById('videoAuthor').innerText = `@${data.author.unique_id || 'user'}`;
+
+          mediaData.noWmUrl = data.play;
+          mediaData.mp3Url = data.music;
+          mediaData.wmUrl = data.wmplay;
+          mediaData.title = (data.title || 'POMTIK_Video').replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
+
+          document.getElementById('btnNoWm').onclick = () => downloadFile(mediaData.noWmUrl, `${mediaData.title}_NoWM.mp4`);
+          document.getElementById('btnMp3').onclick = () => downloadFile(mediaData.mp3Url, `${mediaData.title}_Audio.mp3`);
+          document.getElementById('btnWm').onclick = () => downloadFile(mediaData.wmUrl, `${mediaData.title}_WM.mp4`);
+
+          videoPreview.style.display = 'block';
+        } else {
+          showError('Gagal mengambil data video. Pastikan link TikTok valid.');
+        }
+      } catch (err) {
+        loading.style.display = 'none';
+        showError('Terjadi kesalahan koneksi jaringan.');
+      }
+    }
+
+    async function downloadFile(fileUrl, fileName) {
+      const loading = document.getElementById('loading');
+      const loadingText = document.getElementById('loadingText');
+
+      loadingText.innerText = 'Mengunduh file... Mohon tunggu.';
+      loading.style.display = 'block';
+
+      try {
+        const res = await fetch(fileUrl);
+        const blob = await res.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+        loading.style.display = 'none';
+      } catch (err) {
+        loading.style.display = 'none';
+        window.open(fileUrl, '_blank');
+      }
+    }
+
+    function showError(msg) {
+      const errorBox = document.getElementById('errorBox');
+      errorBox.innerText = msg;
+      errorBox.style.display = 'block';
+    }
+
+    // --- FITUR 3: REGISTRASI PWA INLINE (Agar HP Membaca Web Ini Sebagai Aplikasi) ---
+    const manifestData = {
+      name: "POMTIK TikTok Downloader",
+      short_name: "POMTIK",
+      start_url: ".",
+      display: "standalone",
+      background_color: "#1e3a8a",
+      theme_color: "#1e3a8a",
+      icons: [{
+        src: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/download.svg",
+        sizes: "512x512",
+        type: "image/svg+xml"
+      }]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+    const manifestURL = URL.createObjectURL(manifestBlob);
+    const linkManifest = document.createElement('link');
+    linkManifest.rel = 'manifest';
+    linkManifest.href = manifestURL;
+    document.head.appendChild(linkManifest);
+  </script>
+</body>
+</html>
